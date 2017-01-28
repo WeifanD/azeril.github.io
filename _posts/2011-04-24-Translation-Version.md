@@ -87,7 +87,7 @@ dialogue_words %>%
   as.data.frame(.) %>% 
   wordcloud2(size = 1.5, shape = 'star')
 ```
-![](http://p1.bqimg.com/567571/3138b92876a22807.png)
+![center](http://p1.bqimg.com/567571/3138b92876a22807.png)
 
 作为一部典型的美剧，格雷的台词除却医学专用此外，日常常用词还是占多数的，像什么god／ah／guy之类的口头语，chief／Dr的title，当然也有医学题材不可避免的surgery，接下来看看这部剧积极的情绪词频。
 
