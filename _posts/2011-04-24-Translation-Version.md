@@ -1,201 +1,166 @@
 ---
 layout: post
-title: 外国文学中译本汇编
-categories: [blog ]
-tags: [book, list, ]
-description: 对于运输水果来说，保鲜效果是非常重要的，就翻译而言，好翻译总是妙在难言。
+title: 对实习医生格蕾的初步探索"
+description: "An analysis and visualization of a holiday classic."
+output: html_document
+date: 2017-1-28 3:30:00 -0400
+category: r
+tags: [r]
+comments: true
 ---
 
-关于外国文学的中译优秀版本整理 以作阅读和买书参考   
-因个人阅读资历浅薄 尤其在外国文学经典作品这一点上  
-故资料主要来自网络搜罗 文章主体出自豆瓣社区小组 原链接附在最后 其它资料收集自豆瓣书评 百度知道 当当书评和一些论坛讨论   
-纰漏错误什么的在所难免 将在以后不定期进行更改扩展目录 并更多按照自己的见解 如果有的话。  
+```{r cache = FALSE, echo = FALSE}
+knitr::opts_chunk$set(cache = TRUE, message = FALSE, warning = FALSE)
 
-### 苏俄 
-列夫·托尔斯泰作品  
-草婴——《战争与和平》，短期无法超越。（惜草婴先生撤版，不再出）另高植译本  
-草婴——《安娜卡列尼娜》《复活》  
-丽尼——《前夜》《贵族之家》  
-巴金——《父与子》  　　
+library(ggplot2)
+theme_set(theme_bw())
+```
 
-陀思妥耶夫斯基作品：  
-荣如德——《卡拉玛佐夫兄弟》另耿济之版   
-朱海观&王汶《罪与罚》另岳麟版可选  
-荣如德——《白痴》  
-南江——《被侮辱和被损害的》另有荃麟版  
+今天是大年初一，是个好日子，耳边传来的是小岳岳的歌声，手下正敲打着键盘，想说一定要把这个小坑tm给填了！！
+数据挖掘中文本挖掘一直觉得是挺有意思的主题，今天就模仿着David Robinson的blog[love actually](http://varianceexplained.org/r/love-actually-network/)
 
-刘辽逸&楼适夷&陆风——《童年 在人间 我的大学》  
-瞿秋白&巴金&耿济之&伊信——《高尔基短篇小说选》  
-汝龙——契诃夫作品  
-丰子恺——契诃夫《猎人笔记》  
-丽尼——屠格涅夫《前夜》《父与子》人文社或译文社 巴金译本  
-磊然——屠格涅夫《罗亭 贵族之家》  
-翟松年——莱蒙托夫《当代英雄》  
-满涛——果戈理《死魂灵》  
-蓝英年&张秉衡——帕斯捷尔纳克《日瓦戈医生》  
-梅益——奥斯特洛夫斯基《钢铁是怎样炼成的》  
-楼适夷——赫尔岑《谁之罪》  
-王士燮——《苦难的历程》　  
-智量——普希金《叶甫盖尼·奥涅金》   
-蓝英年——帕斯捷尔纳克的《日瓦格医生》  
-金人——肖霍洛夫的《静静的顿河》  
-草婴——肖洛霍夫《一个人的遭遇》   
-项星耀——赫尔岑《往事与随想》戈宝权——俄文译诗   
-戴骢——布宁和巴别尔  
-索尔仁尼琴《古拉格群岛》蒋路——车尔尼雪夫斯基《怎么办？》  
+### 数据源
 
-### 法国 
+首先当然就是获得数据文本，就在百度上搜了一部我最喜欢的医学美剧，'Gary's Anatomy'，实习医生格蕾的光碟还在大白熊那，估计是要尘封一段时间了，不行，要找时间讨回来的说！！
 
-成钰亭——拉伯雷《巨人传》   
-李健吾——福楼拜《包法利夫人》另周克希版，也很好  
-周克希、徐和瑾——《追忆似水年华》  
+```{r}
+raw <- readLines("gary's anatomy.txt")
+df <- data_frame(raw = raw) %>% 
+  filter(raw != "", !is.na(raw)) %>% 
+  separate(raw, c("form","content"),sep = ": ",fill = "left") %>% 
+  mutate(form = ifelse(is.na(form), "Others", form)) %>% 
+  mutate(is_scene = str_detect(form, "2x"),
+         scene = cumsum(is_scene))
+head(df)
+```
+好了现在我们算是对raw data进行了initial manipulation,一个tidy data的过程。当然这里算是很简单了，正常数据挖掘中data cleaning通常要花费一名data analyst60%的时间，这我深有体会啊。叹一声先。。
 
-巴尔扎克作品：
-傅雷——巴尔扎克《欧也妮葛朗台》《高老头》《幻灭》    
-郑永慧——《巴尔扎克中短篇小说选》   
+我在网上找到的这个剧本是格雷第二季，包括了本集名字／演员的台词以及场景转换，当然还有我觉得最有意思的旁白。
+先看看究竟第二季有哪些主题，都是谁写的，剧本中用到的高频单词是什么，以及台词频率最高的是不是就是我们印象中的那些主角？
 
-雨果作品：
-李丹&方于——《悲惨世界》另郑克鲁版  
-陈敬容——《巴黎圣母院》  
-陈筱卿——《海上劳工》另 陈乐译本   
-郑永慧、鲁膺——《笑面人》  
-郑永慧——《九三年》   
-程曾厚——《雨果诗选》  
-许渊冲——雨果戏剧 　 
+```{r cache = FALSE, echo = FALSE}
+series_name <- df %>% 
+  filter(str_detect(form, "2x")) %>% 
+  rename(name = content) %>% 
+  select(form, name) %>% 
+  mutate(form = str_replace(form, "2x", ""))
+series_name
+```
 
-傅雷——罗曼·罗兰《约翰·克利斯朵夫》《名人传》   
-钱春绮《恶之花》郭宏安版，感觉也不错  
-王振孙——小仲马《茶花女》   
-郝运——《都德小说选》  
-王振孙——莫泊桑《一生》 《漂亮朋友》  
-郑克鲁——波德莱尔《恶之花》   
-李建吾——《莫里哀喜剧六种》  
-焦菊隐——左拉《娜娜》  
-蒋学模——大仲马《基督山伯爵》 虽是转译本，但由于译者和编辑的高水平，使它成为名译。  
-王振孙《三个火枪手》另郝运、周克西版  
-罗新璋——《红与黑》  
-花城出版社——法布尔《昆虫记》  
-朱雯——雷马克《西线无战事》  
-屠友祥——罗兰·巴特  
-王道乾——杜拉斯《情人》 图尼埃《礼拜五》 普鲁斯特《驳圣伯夫》  
-柳鸣九——杜拉斯《悠悠此情》《长别离》《广岛之恋》  
-萧望、黄荭——圣·埃克苏佩里《小王子》  
-王东亮——《劳儿之劫》  
-马振骋——高更的《诺阿 诺阿》、纪德、蒙田《蒙田随笔全集》  
-余中先等人——贝克特  
-杨绛先生——勒萨日 《吉尔布拉斯》  
+我们来看一下，第二季总共27集，有没有你印象最深的一集呢？我想第一集的writer可能没想到多年之后，有一个胖胖的女生唱了一首足够震撼动人心魄的歌曲，她的第一句音起就是“When the rain is blowing in your eyes and the whole world is on your case”～
 
-### 美国
+```{r cache=FALSE echo=FALSE}
+writer <- df %>% 
+  filter(form == "Written by") %>% 
+  separate(content, c("writer1","writer2"),sep = " & ",fill = "right")
 
-曹庸——麦克维尔的《白鲸》  
-于晓丹——纳博科夫《洛丽塔》另黄建人版  
-李文俊——福克纳 傅东华——玛格丽特·米歇尔《飘》  
-王永年——欧·亨利《欧•亨利短篇小说选》  
-侍桁——霍桑《红字》  
-吴劳——杰克伦敦《马丁·伊登》  
-楚图南——惠特曼《草叶集》   
-徐迟、戴欢——梭罗《瓦尔登湖》   
-赵罗蕤——艾略特《荒原》   
-张友松——《傻瓜威尔逊》  
+writer1 <- writer %>% 
+  select(writer1)
 
-吴劳——海明威作品  
-汤永宽——海明威《永别了，武器》　  
-施咸荣《麦田里的守望者》另孙仲旭译本   
-潘岳、雷格——莫里森《宠儿》  
+writer2 <- writer %>% 
+  select(writer2)
 
-### 英国
+library(ggplot2) 
+writer1 %>%
+  merge(writer2) %>% 
+  count(writer1, sort = TRUE) %>% 
+  mutate(content = reorder(writer1,n)) %>% 
+  ggplot(aes(content, n))+
+  geom_bar(stat = "identity")+
+    coord_flip()+
+  ggtitle("Main writers")
 
-莎士比亚  
-朱生豪——莎士比亚戏剧  
-卞之琳——《莎士比亚悲剧四种》  
+```
+ 
+ 
+```{r}
+library(tidytext)
+reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
+dialogue_words <- dialogue %>%
+  select(content) %>% 
+  unnest_tokens(word, content, token = "regex", pattern = reg) %>% 
+  filter(!word %in% stop_words$word)
 
-冯象——《贝奥武甫》、摩西五经  
-方重、黄杲炘——杰弗雷·乔叟《坎特伯雷故事》方的为散文译本 黄是诗歌译本  
-朱维之——弥尔顿《失乐园》  
-穆旦——雪莱诗歌  
-傅惟慈——毛姆《月亮和六便士》  
-董乐山——奥威尔《1984》最近又出了个孙仲旭的译本。  
-张谷若——哈代。其中的翻译技法常被拿来作为范例。   
-杨苡——艾米丽·勃朗特《呼啸山庄》另有张玲&张扬、方平版可选   
-狄更斯 荣如德——《雾都孤儿》何文安的也不错  
-张玲&张扬《双城记》  
-张谷若——《大卫·科波菲尔》庄绎传译本也很不错  
-王科一——《远大前程》  
-查良铮——拜伦《唐璜》  
-王科一——简·奥斯汀《傲慢与偏见》 另张玲&张扬译本  
-李俍民——艾捷尔·丽莲·伏尼契《牛虻》另古绪满版  
-祝庆英——夏洛蒂·勃朗特《简爱》另宋兆霖版可选  
-董乐山——奥威尔《一九八四》  
-徐霞村——笛福《鲁滨逊漂流记》  
-张谷若——哈代《德伯家的苔丝》、《无名的裘德》、《还乡》  
-杨必——萨克雷《名利场》  
-周煦良——约翰·高尔斯华绥《福尔赛世家》  
+library(wordcloud2)
+dialogue_words %>% 
+  count(word, sort = T) %>% 
+  as.data.frame(.) %>% 
+  wordcloud2(size = 1.5, shape = 'star')
+```
 
-爱尔兰 金堤、萧乾夫妇——乔伊斯《尤利西斯》  
-蒲隆——劳伦斯·斯特恩《项狄传》，很难译的书。 
+作为一部典型的美剧，格雷的台词除却医学专用此外，日常常用词还是占多数的，像什么god／ah／guy之类的口头语，chief／Dr的title，当然也有医学题材不可避免的surgery，接下来看看这部剧积极的情绪词频。
 
-### 德国
+```{r}
+senti_stat <- dialogue_words %>% 
+  inner_join(sentiments)
+  
+senti_stat %>% 
+  filter(sentiment == "positive") %>% 
+  count(word, sort = T) %>% 
+  as.data.frame(.) %>% 
+  wordcloud2(size = 1)
+```
+跟想象中差不多，lucky／love／happy占首位
 
-歌德  
-梁宗岱——歌德作品  
-杨武能、侯俊吉——《少年维特的烦恼》  
-钱春绮、绿原《浮士德》  
+接下来我们挖一下人物关系吧
 
-冯至——海涅、里尔克  
-杨武能——托马斯·曼《魔山》  
-徐梵澄——尼采《苏鲁支语录》文言 　 　　
+```{r}
+character_df <- df %>% 
+  filter(!is.na(form), 
+         !str_detect(form, "by"),
+         !str_detect(form, "2x"),
+            !str_detect(form, "Original"),
+         !str_detect(form, "Others"),
+                     !str_detect(form, "MVO"))
+  
+character_df %>% 
+  count(form, sort = TRUE) %>% 
+  slice(1:5)
+```
 
-## 古代希腊罗马 
-周作人——古希腊作品  
-罗念生、王焕生——《伊利亚特》杨宪益,罗念生和王焕生,陈中梅,傅东华几位先生的荷马 各有千秋
-王焕生——《奥德赛》  
-杨周翰——《埃涅阿斯纪》《变形记》   
-楚图南《希腊神话》  
-罗念生 杨宪益 王焕生——《古希腊戏剧选》   
-罗念生——《悲剧二种》《伊索寓言》  
-梁实秋——《沉思录》  
 
-### 日本
+```{r lines}
+lines <- character_df %>%
+    filter(!is_scene) %>%
+    rename(speaker = form, dialogue = content) %>% 
+    group_by(scene, line = cumsum(!is.na(speaker))) %>%
+    summarize(speaker = speaker[1], dialogue = str_c(dialogue, collapse = " ")) %>% 
+  mutate(speaker = str_replace(speaker,"\\(.+", "")) %>% 
+  filter(!is.na(speaker))
+```
 
-金溟若——三岛由纪夫的《爱的饥渴》  
-丰子恺——《源氏物语》  
-叶渭渠——川端康成的《雪国》和《伊豆的舞女》  
-高慧勤——《雪国》、《古都》另侍桁译本 但市面罕有  
-周作人——日本文学、《枕草子》
+现在每集每个人每句台词形成一行，也就是one scene one line one observation, 将其转变成“speaker-by-scene matrix”，为之后的聚类做准备。
 
-### 奥地利 
+```{r speaker_scene_matrix, dependson = "cast"}
+by_speaker_scene <- lines %>%
+    count(scene, speaker) %>% 
+  filter(n > 15)
 
-林克——里尔克（黄灿然从英译本转译过里尔克 臃肿不可读）  
-汤永宽、高年生——卡夫卡《城堡》  
-捷克 星灿——《好兵帅克》萧乾先生有节译本。  
-叶廷芳——卡夫卡  
-许钧——《不能承受的生命之轻》    
-蒋承俊——《绞刑架下的报告》  
-意大利 田德望——《神曲》。完全根据意大利文翻译的。钱稻孙以骚体译数章 另有王维克译版  
-夏丏尊——《爱的教育》  
-李俍民——《斯巴达克斯》  
-王永年、方平&王科——《十日谈》  
-吕同六——卡尔维诺、莫拉维亚  
+library(reshape2)
+speaker_scene_matrix <- by_speaker_scene %>%
+    acast(speaker ~ scene, fun.aggregate = length)
+norm <- speaker_scene_matrix / rowSums(speaker_scene_matrix)
 
-### 印度
-季羡林——《罗摩衍那》
-黄宝生&金克木几位先生接力译的《摩诃婆罗多》而价高  
-季羡林——《五卷书》  
-谢冰心&石真&郑振铎&黄雨石——《泰戈尔诗选》  
-徐梵澄——《薄伽梵歌》  
-吴美真——《微物之神》  
-冰岛 石琴娥——北欧文学。《萨迦》真不错。语言简练，有韵致。   
+h <- hclust(dist(norm, method = "manhattan"))
+plot(h)
+```
 
-### 其它
+啦啦啦我们五大主角果然聚在一起了，谁叫他们工作在一起住还住一起～
 
-戴望舒——洛尔伽  
-董燕生——《堂吉诃德》。杨绛先生的也很不错。   
-王央乐——博尔赫斯 另有王永年版     
-朱景冬——马尔克斯《百年孤独》另吴健恒版  
-丹麦 叶君健——安徒生《安徒生童话》   
-挪威 萧乾——《易卜生戏剧选》     
-波兰 侍桁——显克微支《你往何处去》另张振辉版   陈冠商——显克微支《十字军骑士》另易丽君版
+```{r ordering, dependson = "h"}
+ordering <- h$labels[h$order]
+```
 
-澳大利亚 曾胡 ——《荆棘鸟》   
+```{r scenes, dependson = "speaker_scene_matrix"}
+scenes <- by_speaker_scene %>%
+    filter(n() > 1) %>%        # scenes with > 1 character
+    ungroup() %>%
+    mutate(scene = as.numeric(factor(scene)),
+           character = factor(speaker, levels = ordering))
 
-历史素材链接：http://www.douban.com/group/topic/17310664/
+ggplot(scenes, aes(scene, speaker)) +
+    geom_point() +
+    geom_path(aes(group = scene))
+```
+我们可以看到每一集出现人物的关系线，Alex居然第九集没有出场，Mark第18集才出场，看来我得去回顾一下第二季了，先到这里等我review剧之后再把埋一下。
+
