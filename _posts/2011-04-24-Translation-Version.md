@@ -145,7 +145,7 @@ norm <- speaker_scene_matrix / rowSums(speaker_scene_matrix)
 h <- hclust(dist(norm, method = "manhattan"))
 plot(h)
 ```
-![center](http://i1.piimg.com/567571/3ea3e83d94f10490.png)
+![center](http://i1.piimg.com/567571/9dc9a338573c4157.png)
 
 啦啦啦我们五大主角果然聚在一起了，谁叫他们工作在一起住还住一起～
 
