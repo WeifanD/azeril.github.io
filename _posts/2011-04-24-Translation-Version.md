@@ -71,8 +71,8 @@ writer1 %>%
   ggtitle("Main writers")
 
 ```
- 
- 
+![center](http://p1.bqimg.com/567571/1efbc299a455094c.png)
+
 ```{r}
 library(tidytext)
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
@@ -87,6 +87,7 @@ dialogue_words %>%
   as.data.frame(.) %>% 
   wordcloud2(size = 1.5, shape = 'star')
 ```
+![center](http://i1.piimg.com/567571/3ea3e83d94f10490.png)
 
 作为一部典型的美剧，格雷的台词除却医学专用此外，日常常用词还是占多数的，像什么god／ah／guy之类的口头语，chief／Dr的title，当然也有医学题材不可避免的surgery，接下来看看这部剧积极的情绪词频。
 
@@ -144,6 +145,7 @@ norm <- speaker_scene_matrix / rowSums(speaker_scene_matrix)
 h <- hclust(dist(norm, method = "manhattan"))
 plot(h)
 ```
+![center](http://i1.piimg.com/567571/9dc9a338573c4157.png)
 
 啦啦啦我们五大主角果然聚在一起了，谁叫他们工作在一起住还住一起～
 
@@ -162,5 +164,7 @@ ggplot(scenes, aes(scene, speaker)) +
     geom_point() +
     geom_path(aes(group = scene))
 ```
+![center](http://p1.bpimg.com/567571/8ab454ce2effc2ca.png)
+
 我们可以看到每一集出现人物的关系线，Alex居然第九集没有出场，Mark第18集才出场，看来我得去回顾一下第二季了，先到这里等我review剧之后再把埋一下。
 
