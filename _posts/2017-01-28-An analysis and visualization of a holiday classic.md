@@ -16,10 +16,10 @@ comments: true
 
 首先当然就是获得数据文本，就在百度上搜了一部我最喜欢的医学美剧，'Gary's Anatomy'，实习医生格蕾的光碟还在大白熊那，估计是要尘封一段时间了，不行，要找时间讨回来的说！！
 
-
-> raw <- readLines("gary's anatomy.txt")
-> df <- data_frame(raw = raw) %>% 
-> filter(raw != "", !is.na(raw)) %>% 
+```
+raw <- readLines("gary's anatomy.txt")
+df <- data_frame(raw = raw) %>% 
+  filter(raw != "", !is.na(raw)) %>% 
   separate(raw, c("form","content"),sep = ": ",fill = "left") %>% 
   mutate(form = ifelse(is.na(form), "Others", form)) %>% 
   mutate(is_scene = str_detect(form, "2x"),
@@ -59,6 +59,7 @@ senti_stat %>%
   count(word, sort = T) %>% 
   as.data.frame(.) %>% 
   wordcloud2(size = 1)
+```
 ```
 ![center](http://p1.bqimg.com/567571/3138b92876a22807.png)
 
