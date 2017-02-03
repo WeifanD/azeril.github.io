@@ -37,7 +37,7 @@ head(df)
 
 ![center](http://p1.bqimg.com/567571/1efbc299a455094c.png)
 
-{% highlight r %}
+``
 library(tidytext)
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
 dialogue_words <- dialogue %>%
@@ -59,7 +59,7 @@ senti_stat %>%
   count(word, sort = T) %>% 
   as.data.frame(.) %>% 
   wordcloud2(size = 1)
-{% endhighlight r %}
+```
 
 ![center](http://p1.bqimg.com/567571/3138b92876a22807.png)
 
@@ -70,7 +70,7 @@ senti_stat %>%
 
 ![](http://p1.bqimg.com/567571/0aae117158654918.png)
 
-{% highlight r %}
+```
 lines <- character_df %>%
     filter(!is_scene) %>%
     rename(speaker = form, dialogue = content) %>% 
@@ -78,7 +78,7 @@ lines <- character_df %>%
     summarize(speaker = speaker[1], dialogue = str_c(dialogue, collapse = " ")) %>% 
   mutate(speaker = str_replace(speaker,"\\(.+", "")) %>% 
   filter(!is.na(speaker))
-{% endhighlight r %}
+```
 
 现在每集每个人每句台词形成一行，也就是one scene one line one observation, 将其转变成“speaker-by-scene matrix”，为之后的聚类做准备。
 
