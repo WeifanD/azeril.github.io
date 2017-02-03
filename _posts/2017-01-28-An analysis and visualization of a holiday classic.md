@@ -16,7 +16,7 @@ comments: true
 
 首先当然就是获得数据文本，就在百度上搜了一部我最喜欢的医学美剧，'Gary's Anatomy'，实习医生格蕾的光碟还在大白熊那，估计是要尘封一段时间了，不行，要找时间讨回来的说！！
 
-```
+```r
 raw <- readLines("gary's anatomy.txt")
 df <- data_frame(raw = raw) %>% 
   filter(raw != "", !is.na(raw)) %>% 
@@ -27,6 +27,7 @@ df <- data_frame(raw = raw) %>%
 head(df)
 ```
 
+
 好了现在我们算是对raw data进行了initial manipulation,一个tidy data的过程。当然这里算是很简单了，正常数据挖掘中data cleaning通常要花费一名data analyst60%的时间，这我深有体会啊。叹一声先。。
 
 我在网上找到的这个剧本是格雷第二季，包括了本集名字／演员的台词以及场景转换，当然还有我觉得最有意思的旁白。
@@ -36,8 +37,16 @@ head(df)
 我们来看一下，第二季总共27集，有没有你印象最深的一集呢？我想第一集的writer可能没想到多年之后，有一个胖胖的女生唱了一首足够震撼动人心魄的歌曲，她的第一句音起就是“When the rain is blowing in your eyes and the whole world is on your case”～
 
 ![center](http://p1.bqimg.com/567571/1efbc299a455094c.png)
+![center](http://p1.bqimg.com/567571/3138b92876a22807.png)
 
-``r
+作为一部典型的美剧，格雷的台词除却医学专用此外，日常常用词还是占多数的，像什么god／ah／guy之类的口头语，chief／Dr的title，当然也有医学题材不可避免的surgery，接下来看看这部剧积极的情绪词频。
+跟想象中差不多，lucky／love／happy占首位
+
+接下来我们挖一下人物关系吧
+
+![](http://p1.bqimg.com/567571/0aae117158654918.png)
+
+```r
 library(tidytext)
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
 dialogue_words <- dialogue %>%
@@ -59,18 +68,7 @@ senti_stat %>%
   count(word, sort = T) %>% 
   as.data.frame(.) %>% 
   wordcloud2(size = 1)
-```
-```
-![center](http://p1.bqimg.com/567571/3138b92876a22807.png)
-
-作为一部典型的美剧，格雷的台词除却医学专用此外，日常常用词还是占多数的，像什么god／ah／guy之类的口头语，chief／Dr的title，当然也有医学题材不可避免的surgery，接下来看看这部剧积极的情绪词频。
-跟想象中差不多，lucky／love／happy占首位
-
-接下来我们挖一下人物关系吧
-
-![](http://p1.bqimg.com/567571/0aae117158654918.png)
-
-```r
+  
 lines <- character_df %>%
     filter(!is_scene) %>%
     rename(speaker = form, dialogue = content) %>% 
