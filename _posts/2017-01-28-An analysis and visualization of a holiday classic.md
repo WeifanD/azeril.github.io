@@ -16,7 +16,7 @@ comments: true
 
 首先当然就是获得数据文本，就在百度上搜了一部我最喜欢的医学美剧，'Gary's Anatomy'，实习医生格蕾的光碟还在大白熊那，估计是要尘封一段时间了，不行，要找时间讨回来的说！！
 
-```
+```r
 raw <- readLines("gary's anatomy.txt")
 df <- data_frame(raw = raw) %>% 
   filter(raw != "", !is.na(raw)) %>% 
@@ -37,7 +37,7 @@ head(df)
 
 ![center](http://p1.bqimg.com/567571/1efbc299a455094c.png)
 
-``
+``r
 library(tidytext)
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
 dialogue_words <- dialogue %>%
@@ -70,7 +70,7 @@ senti_stat %>%
 
 ![](http://p1.bqimg.com/567571/0aae117158654918.png)
 
-```
+```r
 lines <- character_df %>%
     filter(!is_scene) %>%
     rename(speaker = form, dialogue = content) %>% 
