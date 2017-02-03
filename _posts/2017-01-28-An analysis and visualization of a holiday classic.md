@@ -12,7 +12,7 @@ comments: true
 今天是大年初一，是个好日子，耳边传来的是小岳岳的歌声，手下正敲打着键盘，想说一定要把这个小坑tm给填了！！
 数据挖掘中文本挖掘一直觉得是挺有意思的主题，今天就模仿着David Robinson的[love actually](http://varianceexplained.org/r/love-actually-network/)
 
-# 数据源
+## 数据源
 
 首先当然就是获得数据文本，就在百度上搜了一部我最喜欢的医学美剧，'Gary's Anatomy'，实习医生格蕾的光碟还在大白熊那，估计是要尘封一段时间了，不行，要找时间讨回来的说！！
 
