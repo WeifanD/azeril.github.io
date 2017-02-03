@@ -12,11 +12,11 @@ comments: true
 今天是大年初一，是个好日子，耳边传来的是小岳岳的歌声，手下正敲打着键盘，想说一定要把这个小坑tm给填了！！
 数据挖掘中文本挖掘一直觉得是挺有意思的主题，今天就模仿着David Robinson的[love actually](http://varianceexplained.org/r/love-actually-network/)
 
-## 数据源
+# 数据源
 
 首先当然就是获得数据文本，就在百度上搜了一部我最喜欢的医学美剧，'Gary's Anatomy'，实习医生格蕾的光碟还在大白熊那，估计是要尘封一段时间了，不行，要找时间讨回来的说！！
 
-{% highlight r %}
+```
 raw <- readLines("gary's anatomy.txt")
 df <- data_frame(raw = raw) %>% 
   filter(raw != "", !is.na(raw)) %>% 
@@ -25,7 +25,7 @@ df <- data_frame(raw = raw) %>%
   mutate(is_scene = str_detect(form, "2x"),
          scene = cumsum(is_scene))
 head(df)
-{% endhighlight r %}
+```
 
 好了现在我们算是对raw data进行了initial manipulation,一个tidy data的过程。当然这里算是很简单了，正常数据挖掘中data cleaning通常要花费一名data analyst60%的时间，这我深有体会啊。叹一声先。。
 
