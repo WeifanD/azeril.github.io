@@ -5,12 +5,13 @@ categories: [blog ]
 tags: [SQL]
 description: 在R中创建数据库
 ---
+## 数据准备
 
 加载R包，负责链接数据库工作和data manipulation的dplyr、绘图工作的ggplot2，以及我平常不太用的data.table，其中的数据读取与整合函数(fread/rbindlist)非常高效。
 
 从 <http://www.nber.org/fda/faers> 上用download.file下载数据并解压。这里用到的数据是来自某博客的统计数据，包括13年至15年这段期间人口、药物、反应、结果、应对措施数据集。
 
-# 👇连接季度数据文件并对每个类目创建单个数据集
+## 👇连接季度数据文件并对每个类目创建单个数据集
 
 人口统计数据
 
@@ -95,7 +96,7 @@ my_database<- src_sqlite("adverse_events", create = TRUE)
 
 我们使用dplyr包中的copy_to()函数把数据上传到数据库。根据文档，新写入的对象可能只是一个临时文件，我们需要把temporary参数设定为false来使得新对象是永久文件。
 
-#上传各个类目的数据至SQLite数据库
+## 上传各个类目的数据至SQLite数据库
 
 ```
 copy_to(my_database,demography,temporary = FALSE)
