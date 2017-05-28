@@ -13,7 +13,7 @@ description: 在R中创建数据库
 
 ## 👇连接季度数据文件并对每个类目创建单个数据集
 
-人口统计数据
+### 人口统计数据
 
 ```
 filenames <- list.files(pattern="^demo.*.csv", full.names=TRUE)
@@ -40,7 +40,7 @@ Classes ‘data.table’ and 'data.frame':  3037542 obs. of  9 variables:
 
 可以看到人口统计数据有超过300万行观测，变量则包括年龄，年龄代码，事件发生日期，性别，体重，体重代码和事件发生国家。
 
-药物数据
+### 药物数据
 
 ```
  Classes ‘data.table’ and 'data.frame':  10026718 obs. of  4 variables:
@@ -53,7 +53,7 @@ Classes ‘data.table’ and 'data.frame':  3037542 obs. of  9 variables:
 
 药物数据集有大概1000万的观测，变量包括药物名称和路径等。
 
-诊断结果/反应特征
+### 诊断结果/反应特征
 
 ```
 Classes ‘data.table’ and 'data.frame':  5675759 obs. of  3 variables:
@@ -65,7 +65,7 @@ Classes ‘data.table’ and 'data.frame':  5675759 obs. of  3 variables:
 
 该数据集有600多万个观测，变量有身份证ID，药物序列和反应特征。
 
-事件结果
+### 事件结果
 
 ```
 Classes ‘data.table’ and 'data.frame':  1933641 obs. of  2 variables:
@@ -75,7 +75,7 @@ Classes ‘data.table’ and 'data.frame':  1933641 obs. of  2 variables:
 
 该数据集有2000多万观测，变量有省份证ID和最终结果。
 
-针对事件的措施
+### 针对事件的措施
 
 ```
 fClasses ‘data.table’ and 'data.frame':  8045719 obs. of  2 variables:
@@ -84,7 +84,7 @@ fClasses ‘data.table’ and 'data.frame':  8045719 obs. of  2 variables:
 ```
 这是一个有约1000万观测，变量为身份证ID和事件应对措施的数据集。
 
-创建数据库
+### 创建数据库
 
 要在R中创建一个SQLite数据库，我们只需要设定路径，使用src_sqlite()函数来连接R和现有的sqlite数据库，再用tbl()函数把数据表和该库连接在一起就大功告成了。我们也可以用src_sqlite()函数在特定路径下创建新的SQLite数据库，如果不额外指定路径，数据库将被创建于当前工作目录下。
 
@@ -92,7 +92,7 @@ fClasses ‘data.table’ and 'data.frame':  8045719 obs. of  2 variables:
 my_database<- src_sqlite("adverse_events", create = TRUE)
  # create =TRUE 该参数设定为创建新的数据库
 ```
-将数据写入数据库
+### 将数据写入数据库
 
 我们使用dplyr包中的copy_to()函数把数据上传到数据库。根据文档，新写入的对象可能只是一个临时文件，我们需要把temporary参数设定为false来使得新对象是永久文件。
 
@@ -166,7 +166,7 @@ demography %>% group_by(Country= occr_country) %>%
 
 同样我们可以寻找最常见药物、最常见的5大事件结果、相应的应对措施。
 
-# Joins(连接)
+## Joins(连接)
 
 让我们把人口统计数据，结果数据和应对数据利用身份证ID做主键连接起来：
 
